@@ -1,0 +1,39 @@
+.card {
+  width: 454px;
+  height: 281px;
+  display: flex;
+  font-family: 'Inter', sans-serif;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
+  margin-bottom: 35px;
+}
+.card__img {
+  height: 281px;
+  width: 183px;
+}
+.card_r-col {
+  display: flex;
+  flex-direction: column;
+  padding: 12px 20px;
+}
+
+.card__title {
+  font-size: 20px;
+  font-family: 'Inter', sans-serif;
+  margin-bottom: 0;
+}
+.tag {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+.card__description {
+  width: 228px;
+  height: 129px;
+  margin-bottom: 0em;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 22px;
+}
+.card__rate {
+  margin-top: auto;
+}

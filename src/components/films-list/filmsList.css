@@ -1,0 +1,9 @@
+.films-list {
+  margin: 0 auto;
+  padding: 21px 30px 0 30px;
+  display: flex;
+  max-width: 1010px;
+  background-color: #ffffff;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
