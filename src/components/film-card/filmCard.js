@@ -5,6 +5,8 @@ import { Typography, Rate, Tag } from 'antd';
 import { format } from 'date-fns';
 import './filmCard.css';
 
+import Spinner from '../spinner/spinner'
+
 const { Text } = Typography;
 
 export default class FilmCard extends Component {
@@ -30,7 +32,7 @@ export default class FilmCard extends Component {
   };
 
   static defaultProps = {
-    film: [
+    film: 
       {
         popularity: 4.158,
         vote_count: 31,
@@ -48,15 +50,28 @@ export default class FilmCard extends Component {
           'The movie is set in the brig, the walls of which are painted in a poisonous green color. There fall into two junior officers, Sergei "Fallen" Pakhomov and Vladimir "Little brother"  Epifantsev. So, both lieutenant begin their dialogue. The dialogue began with a discussion of various philosophical problems, as well as the stories of two army lieutenants. Afterwards, "Fallen” starts to turn the conversation in a completely different direction, telling the "Little brother" of how he first had sex with a drunken woman, about how he ejaculated at her face, and then he defecating in the sea, and also how during his urgent service he just did not become a queer...',
         release_date: '1999-01-01',
       },
-    ],
+   
     genres: {},
   };
 
-  state = {};
+  state = {
+    src: "https://www.themoviedb.org/assets/2/v4/glyphicons/basic/glyphicons-basic-38-picture-grey-c2ebdbb057f2a7614185931650f8cee23fa137b93812ccb132b9df511df1cfac.svg"
 
-  render() {
+  };
+
+  render() {    
     const { film, genres } = this.props;
-    const imgUrl = `https://image.tmdb.org/t/p/w200/${film.poster_path}`;
+
+
+    let imgUrl = `https://image.tmdb.org/t/p/w200/${film.poster_path}`;
+    if (!film.poster_path) {
+      imgUrl = "https://www.themoviedb.org/assets/2/v4/glyphicons/basic/glyphicons-basic-38-picture-grey-c2ebdbb057f2a7614185931650f8cee23fa137b93812ccb132b9df511df1cfac.svg"
+    }
+    let rDate = film.release_date;
+    if (film.release_date.length < 4) {
+      rDate = "1488-04-20"
+    }
+    
     function ratingColor(num) {
       if (num < 4) {
         return 'red';
@@ -74,27 +89,33 @@ export default class FilmCard extends Component {
     };
 
     const tags = film.genre_ids.map((el) => {
-      return <Tag className="tag">{genres[el]}</Tag>;
+      return (
+        <Tag className="tag" key={el}>
+          {genres[el]}
+        </Tag>
+      );
     });
+
+    const imagePlaceholder = () => {
+      this.setState({ src : imgUrl})      
+    }
+
     return (
+      // <Spinner />
       <div className="card">
         <div className="card__badge2" style={badgeStyle}>
           <p className="badge__num">{film.vote_average}</p>
         </div>
-        {/* <Badge count={film.vote_average} className="card__badge"/> */}
         <div className="card_l-col">
-          <img className="card__img" src={imgUrl} alt={`Poster for ${film.original_title}`} />
+          <img className="card__img" src={this.state.src} onLoad={imagePlaceholder} alt={`Poster for ${film.original_title}`} />
         </div>
         <div className="card_r-col">
           <h2 className="card__title">{film.original_title}</h2>
           <Text type="secondary" className="card__date">
-            {format(new Date(film.release_date), 'MMMM dd, yyyy')}
+            {format(new Date(rDate), 'MMMM dd, yyyy')}
           </Text>
           <div className="card__tags">{tags}</div>
           <p className="card__description">{film.overview}</p>
-          {/* <Paragraph ellipsis={{ rows: 5 }} className="card__description">
-            {film.overview}
-          </Paragraph> */}
           <Rate disabled count={10} allowHalf defaultValue={film.vote_average} className="card__rate" />
         </div>
       </div>

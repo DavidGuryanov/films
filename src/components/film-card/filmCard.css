@@ -88,3 +88,45 @@
   font-size: 12px;
   line-height: 22px;
 }
+
+@media (max-width: 967px) {
+  .card {
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+@media (max-width: 500px) {
+  .card {
+    width: 387px;
+    height: 245px;
+  }
+  .card__img {
+    height: 91px;
+    width: 60px;
+    position: absolute;
+    left: 10px;
+    top: 6px;
+  }
+  .card__title,
+  .card__tags,
+  .card__date {
+    margin-left: 83px;
+  }
+  .card_r-col {
+    padding: 4px 10px;
+  }
+  .card__description {
+    padding-top: 12px;
+  }
+  .card__rate {
+    margin-left: auto;
+  }
+  .card__badge2 {
+    left: 349px;
+  }
+}
+@media (max-width: 420px) {
+  .card__badge2 {
+    left: 349px;
+  }
+}

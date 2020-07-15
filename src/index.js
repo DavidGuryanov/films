@@ -3,14 +3,16 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import 'antd/dist/antd.css';
-
+import { Pagination, message, Button, Space } from 'antd';
 import Header from './components/header/header';
 import SearchField from './components/search-field/search-field';
 import FilmsList from './components/films-list/filmsList';
 import ApiService from './services/apiService';
+import ErrorModal from './components/error-modal/errorModal';
 
 export default class App extends Component {
   state = {
+    currentPage: 1,
     genresList: {},
     films: [
       {
@@ -31,16 +33,55 @@ export default class App extends Component {
         release_date: '1999-01-01',
       },
     ],
+    filmsToShow: [],
+    loading: false,
+    error: true,
   };
 
   api = new ApiService();
 
+  calcPaginationWidth = () => {
+    if (this.state.films.length > 0) {
+      return { width: `${Math.round(this.state.films.length / 6) * 40 + 120}px` };
+    }
+    return { width: '120px' };
+  };
+
+showErrorPopup = (errorMessage) => {
+
+  message.error(`Error. Can't get your data - ${errorMessage}`, 15);
+  };
+
+  onError = (err) => {
+    this.setState({
+      error: true,
+      loading: false
+    })
+    if (err.message === 'Failed to fetch') {
+      this.showErrorPopup(err.message)
+    }
+
+  }
+
   getFilms = (query) => {
+    this.setState({
+      loading: true,
+    });
     this.api.getFilms(query).then((test) => {
       this.setState({
+       // loading: true,
         films: test,
+        currentPage: 1,
       });
-    });
+      this.checkPage(1);
+      this.onChange(1);
+    }).then(() => {
+      this.setState({
+        loading: false,
+        
+      });
+    })
+    .catch(this.onError);
   };
 
   getGenres = () => {
@@ -53,16 +94,56 @@ export default class App extends Component {
     });
   };
 
+  onChange = (page) => {
+    this.setState({
+      currentPage: page,
+    });
+    this.checkPage(page);
+  };
+
+  checkPage = (page) => {
+    const n = 6;
+    this.setState(({ films }) => {
+      const a = films.slice((page - 1) * n, n * page);
+      return {
+        filmsToShow: a,
+      };
+    });
+  };
+
+  
+
+  testClick(event) {
+    this.checkPage(this.state.currentPage);
+    this.getGenres();
+    this.calcPaginationWidth();
+  }
+
   render() {
-    const { films, genresList } = this.state;
+    const { films, genresList, currentPage, filmsToShow, loading} = this.state;
+    
     return (
-      <div className="app-container" onLoad={() => this.getGenres()}>
+      <div className="app-container" onLoad={() => this.testClick()}>
         <Header />
         <SearchField onSearch={this.getFilms} />
-        <FilmsList films={films} genres={genresList} />
+        
+        <FilmsList films={filmsToShow} genres={genresList} loading={loading}/>
+
+        <Pagination
+          style={this.calcPaginationWidth()}
+          className="paginator_3000"
+          current={currentPage}
+          onChange={this.onChange}
+          pageSize={6}
+          total={films.length}
+        />
       </div>
     );
   }
 }
 
 ReactDOM.render(<App />, document.querySelector('#root'));
+
+// default images
+// mobile
+// default date
