@@ -21,18 +21,12 @@
   font-size: 20px;
   font-family: 'Inter', sans-serif;
   margin-bottom: 0;
-  padding-right: 20px;
 }
 .tag {
   margin-top: 5px;
   margin-bottom: 5px;
 }
 .card__description {
-  /* width: 228px;
-  height: 129px;
-  margin-bottom: 0em;
-  font-style: normal;
-  font-weight: normal;*/
   font-size: 12px;
   line-height: 22px;
   word-break: break-word;
@@ -48,8 +42,10 @@
 .ant-rate-star:not(:last-child) {
   margin-right: 3px;
 }
-.card_tags {
+.card__tags {
   width: 240px;
+  max-height: 32px;
+  overflow: hidden;
 }
 .card__date {
   font-family: Inter;
@@ -58,6 +54,10 @@
   font-size: 12px;
   line-height: 22px;
 }
+.flex-container {
+  display: flex;
+  justify-content: space-between;
+}
 .card__badge2 {
   min-width: 30px;
   height: 30px;
@@ -65,10 +65,7 @@
   border-radius: 50%;
   background-color: white;
   color: black;
-  padding: 3px 0px;
-  position: absolute;
-  left: 417px;
-  top: 13px !important;
+  padding: 4px 0px;
 }
 .ant-badge-count {
   min-width: 30px;
@@ -86,7 +83,7 @@
   text-align: center;
   font-family: Inter;
   font-size: 12px;
-  line-height: 22px;
+  /* line-height: 22px; */
 }
 
 @media (max-width: 967px) {
@@ -120,13 +117,5 @@
   }
   .card__rate {
     margin-left: auto;
-  }
-  .card__badge2 {
-    left: 349px;
-  }
-}
-@media (max-width: 420px) {
-  .card__badge2 {
-    left: 349px;
   }
 }

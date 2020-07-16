@@ -1,35 +1,38 @@
 /* eslint-disable react/jsx-filename-extension */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Spin , Typography, Rate, Tag } from 'antd';
+import { Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import FilmCard from '../film-card/filmCard';
-import Spinner from '../spinner/spinner';
-import '../film-card/filmCard.css'
-
-import { format } from 'date-fns';
+import '../film-card/filmCard.css';
 
 import './filmsList.css';
 
-const { Text } = Typography;
-
 const antIcon = <LoadingOutlined style={{ fontSize: 120 }} spin />;
 
-const loadingPlaceholder = 
-<div className="card">
-        <div className="card_l-col">
-          <img className="card__img" src="https://www.themoviedb.org/assets/2/v4/glyphicons/basic/glyphicons-basic-38-picture-grey-c2ebdbb057f2a7614185931650f8cee23fa137b93812ccb132b9df511df1cfac.svg" alt="Poster for placeholder" />
-        </div>
-        <div className="card_r-col">         
-          <div className="card__description" style={{'paddingLeft': '50px', 'paddingTop': '70px', 'maxHeight': '211px'}}><Spin indicator={antIcon} size="large" /></div>
-        </div>
+const loadingPlaceholder = (
+  <div className="card">
+    <div className="card_l-col">
+      <img
+        className="card__img"
+        src="https://www.themoviedb.org/assets/2/v4/glyphicons/basic/glyphicons-basic-38-picture-grey-c2ebdbb057f2a7614185931650f8cee23fa137b93812ccb132b9df511df1cfac.svg"
+        alt="Poster for placeholder"
+      />
+    </div>
+    <div className="card_r-col">
+      <div className="card__description" style={{ paddingLeft: '50px', paddingTop: '70px', maxHeight: '211px' }}>
+        <Spin indicator={antIcon} size="large" />
       </div>
+    </div>
+  </div>
+);
 
 export default class FilmsList extends Component {
   static propTypes = {
     films: PropTypes.arrayOf(PropTypes.object),
     // eslint-disable-next-line react/forbid-prop-types
     genres: PropTypes.object,
+    loading: PropTypes.bool,
   };
 
   static defaultProps = {
@@ -53,17 +56,16 @@ export default class FilmsList extends Component {
       },
     ],
     genres: {},
+    loading: false,
   };
-
-  
 
   state = {};
 
   render() {
     const { films, genres, loading } = this.props;
     if (loading) {
-     return <div className="films-list">{loadingPlaceholder}</div>; 
-      }
+      return <div className="films-list">{loadingPlaceholder}</div>;
+    }
     const filmsList = films.map((item) => {
       return <FilmCard film={item} genres={genres} key={item.id} />;
     });

@@ -37,6 +37,5 @@ code {
 @media (max-width: 967px) {
   .app-container {
     padding: 21px 16px 0 16px;
-    background-color: red;
   }
 }
