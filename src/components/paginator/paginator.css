@@ -1,0 +1,14 @@
+.paginator_3000 {
+  text-align: center;
+}
+.ant-pagination-item-active {
+  background-color: #1890ff !important;
+  border-radius: 4px !important;
+}
+.ant-pagination-item-active a {
+  color: white !important;
+}
+.ant-pagination-item,
+.ant-pagination-item-link {
+  border: none !important;
+}

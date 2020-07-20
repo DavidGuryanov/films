@@ -3,37 +3,24 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import 'antd/dist/antd.css';
-import { Pagination, message } from 'antd';
+import { message } from 'antd';
 import Header from './components/header/header';
 import SearchField from './components/search-field/search-field';
 import FilmsList from './components/films-list/filmsList';
 import ApiService from './services/apiService';
+import NoResults from './components/no-results/noResults';
+import Paginator from './components/paginator/paginator';
 
 export default class App extends Component {
   state = {
     currentPage: 1,
     genresList: {},
-    films: [
-      {
-        popularity: 4.158,
-        vote_count: 31,
-        video: false,
-        poster_path: '/7zOAA4IygobEpu0E4yLVWv9Htsk.jpg',
-        id: 132030,
-        adult: false,
-        backdrop_path: '/evUhOMCfzM6fGhGnpcUYHnYyshJ.jpg',
-        original_language: 'ru',
-        original_title: 'Зелёный слоник',
-        genre_ids: [18, 27, 53],
-        title: 'The Green Elephant',
-        vote_average: 6.2,
-        overview:
-          'The movie is set in the brig, the walls of which are painted in a poisonous green color. There fall into two junior officers, Sergei "Fallen" Pakhomov and Vladimir "Little brother"  Epifantsev. So, both lieutenant begin their dialogue. The dialogue began with a discussion of various philosophical problems, as well as the stories of two army lieutenants. Afterwards, "Fallen” starts to turn the conversation in a completely different direction, telling the "Little brother" of how he first had sex with a drunken woman, about how he ejaculated at her face, and then he defecating in the sea, and also how during his urgent service he just did not become a queer...',
-        release_date: '1999-01-01',
-      },
-    ],
+    films: [],
     filmsToShow: [],
     loading: false,
+    maxPage: 1,
+    queryPage: 1,
+    textQuery: '',
   };
 
   api = new ApiService();
@@ -69,8 +56,11 @@ export default class App extends Component {
       .getFilms(query)
       .then((arrayOfFilms) => {
         this.setState({
-          films: arrayOfFilms,
+          films: arrayOfFilms.results,
           currentPage: 1,
+          maxPage: arrayOfFilms.total_pages,
+          queryPage: arrayOfFilms.page,
+          textQuery: query,
         });
         this.checkPage(1);
         this.onChange(1);
@@ -93,7 +83,32 @@ export default class App extends Component {
     });
   };
 
+  appendFilms = (txt, page) => {
+    this.api.getFilms(txt, page).then((arrayOfFilms) => {
+      this.setState(({ films }) => {
+        const newFilmsArray = [...films];
+        newFilmsArray.push(...arrayOfFilms.results);
+
+        return {
+          films: newFilmsArray,
+        };
+      });
+    });
+  };
+
   onChange = (page) => {
+    const { queryPage, maxPage, textQuery } = this.state;
+    if (page > 1 && queryPage !== maxPage) {
+      this.setState(() => {
+        const newqueryPage = queryPage + 1;
+        return {
+          queryPage: newqueryPage,
+        };
+      });
+
+      this.appendFilms(textQuery, queryPage + 1);
+    }
+
     this.setState({
       currentPage: page,
     });
@@ -110,6 +125,14 @@ export default class App extends Component {
     });
   };
 
+  notFound = () => {
+    const { films, textQuery } = this.state;
+    if (films.length === 0 && textQuery.length > 0) {
+      return <NoResults />;
+    }
+    return null;
+  };
+
   toDoOnLoad() {
     const { currentPage } = this.state;
     this.checkPage(currentPage);
@@ -119,6 +142,7 @@ export default class App extends Component {
 
   render() {
     const { films, genresList, currentPage, filmsToShow, loading } = this.state;
+    //  console.log(this.state)
 
     return (
       <div className="app-container" onLoad={() => this.toDoOnLoad()}>
@@ -126,15 +150,8 @@ export default class App extends Component {
         <SearchField onSearch={this.getFilms} />
 
         <FilmsList films={filmsToShow} genres={genresList} loading={loading} />
-
-        <Pagination
-          style={this.calcPaginationWidth()}
-          className="paginator_3000"
-          current={currentPage}
-          onChange={this.onChange}
-          pageSize={6}
-          total={films.length}
-        />
+        <this.notFound />
+        <Paginator onChange={this.onChange} currentPage={currentPage} total={films.length} />
       </div>
     );
   }

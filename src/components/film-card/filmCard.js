@@ -65,9 +65,12 @@ export default class FilmCard extends Component {
       imgUrl =
         'https://www.themoviedb.org/assets/2/v4/glyphicons/basic/glyphicons-basic-38-picture-grey-c2ebdbb057f2a7614185931650f8cee23fa137b93812ccb132b9df511df1cfac.svg';
     }
-    let rDate = film.release_date;
-    if (film.release_date.length < 4) {
-      rDate = '1488-04-20';
+    let rDate;
+
+    if (!film.release_date) {
+      rDate = 'Release date unknown';
+    } else {
+      rDate = format(new Date(film.release_date), 'MMMM dd, yyyy');
     }
 
     function ratingColor(num) {
@@ -86,13 +89,19 @@ export default class FilmCard extends Component {
       border: `2px solid ${ratingColor(film.vote_average)}`,
     };
 
-    const tags = film.genre_ids.map((el) => {
-      return (
-        <Tag className="tag" key={el}>
-          {genres[el]}
-        </Tag>
-      );
-    });
+    let tags;
+
+    if (film.genre_ids.length > 0) {
+      tags = film.genre_ids.map((el) => {
+        return (
+          <Tag className="tag" key={el}>
+            {genres[el]}
+          </Tag>
+        );
+      });
+    } else {
+      tags = <Tag className="tag">No tags available</Tag>;
+    }
 
     const imagePlaceholder = () => {
       this.setState({ src: imgUrl });
@@ -112,7 +121,7 @@ export default class FilmCard extends Component {
           </div>
 
           <Text type="secondary" className="card__date">
-            {format(new Date(rDate), 'MMMM dd, yyyy')}
+            {rDate}
           </Text>
           <div className="card__tags">{tags}</div>
           <p className="card__description">{film.overview}</p>
