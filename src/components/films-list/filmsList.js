@@ -30,9 +30,8 @@ const loadingPlaceholder = (
 export default class FilmsList extends Component {
   static propTypes = {
     films: PropTypes.arrayOf(PropTypes.object),
-    // eslint-disable-next-line react/forbid-prop-types
-    genres: PropTypes.object,
     loading: PropTypes.bool,
+    rated: PropTypes.arrayOf(PropTypes.object),
   };
 
   static defaultProps = {
@@ -55,19 +54,27 @@ export default class FilmsList extends Component {
         release_date: '1999-01-01',
       },
     ],
-    genres: {},
     loading: false,
+    rated: [],
   };
 
   state = {};
 
   render() {
-    const { films, genres, loading } = this.props;
+    const { films, loading, rated } = this.props;
+
     if (loading) {
       return <div className="films-list">{loadingPlaceholder}</div>;
     }
     const filmsList = films.map((item) => {
-      return <FilmCard film={item} genres={genres} key={item.id} />;
+      const clonedItem = JSON.parse(JSON.stringify(item));
+      rated.map((ratedFilm) => {
+        if (ratedFilm.id === item.id) {
+          clonedItem.rating = ratedFilm.rating;
+        }
+        return null;
+      });
+      return <FilmCard film={clonedItem} key={item.id} rated={rated} />;
     });
     return <div className="films-list">{filmsList}</div>;
   }

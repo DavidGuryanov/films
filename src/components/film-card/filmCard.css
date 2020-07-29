@@ -21,6 +21,10 @@
   font-size: 20px;
   font-family: 'Inter', sans-serif;
   margin-bottom: 0;
+  max-height: 30px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 .tag {
   margin-top: 5px;
@@ -43,8 +47,8 @@
   margin-right: 3px;
 }
 .card__tags {
-  width: 240px;
-  max-height: 32px;
+  max-width: 240px;
+  height: 32px;
   overflow: hidden;
 }
 .card__date {
@@ -57,6 +61,7 @@
 .flex-container {
   display: flex;
   justify-content: space-between;
+  max-width: 231px;
 }
 .card__badge2 {
   min-width: 30px;
@@ -107,7 +112,7 @@
   .card__title,
   .card__tags,
   .card__date {
-    margin-left: 83px;
+    margin-left: 65px;
   }
   .card_r-col {
     padding: 4px 10px;
@@ -117,5 +122,22 @@
   }
   .card__rate {
     margin-left: auto;
+  }
+}
+@media (max-width: 360px) {
+  .flex-container {
+    max-width: 280px;
+  }
+  .card__description {
+    width: 280px;
+  }
+  .card-tags {
+    width: 220px;
+  }
+  .card__rate {
+    width: 230px;
+  }
+  .card_r-col {
+    width: 288px;
   }
 }

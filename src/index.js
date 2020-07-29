@@ -6,10 +6,12 @@ import 'antd/dist/antd.css';
 import { message } from 'antd';
 import Header from './components/header/header';
 import SearchField from './components/search-field/search-field';
+import RatedTab from './components/rated-tab/ratedTab';
 import FilmsList from './components/films-list/filmsList';
 import ApiService from './services/apiService';
 import NoResults from './components/no-results/noResults';
 import Paginator from './components/paginator/paginator';
+import { Provider } from './components/context/context';
 
 export default class App extends Component {
   state = {
@@ -21,17 +23,21 @@ export default class App extends Component {
     maxPage: 1,
     queryPage: 1,
     textQuery: '',
+    guestID: '',
+    // eslint-disable-next-line react/no-unused-state
+    rated: [],
+    pseudoRated: [],
+    currentTab: 'search',
   };
 
   api = new ApiService();
 
-  calcPaginationWidth = () => {
-    const { films } = this.state;
-    if (films.length > 0) {
-      return { width: `${Math.round(films.length / 6) * 40 + 120}px` };
-    }
-    return { width: '120px' };
-  };
+  componentDidMount() {
+    this.getGenres();
+    const { currentPage } = this.state;
+    this.checkPage(currentPage);
+    this.createGuest();
+  }
 
   showErrorPopup = (errorMessage) => {
     message.error(errorMessage, 15);
@@ -83,12 +89,58 @@ export default class App extends Component {
     });
   };
 
+  createGuest = () => {
+    this.api.createGuest().then((result) => {
+      this.setState(() => {
+        return {
+          guestID: result.guest_session_id,
+        };
+      });
+    });
+  };
+
+  getRatedFilms = (guestID) => {
+    this.api.getGuestRatings(guestID).then((result) => {
+      this.setState(() => {
+        return {
+          rated: result.results,
+        };
+      });
+    });
+  };
+
+  rateFilm = (filmID, guestID, rating, fullInfo) => {
+    this.api.rateFilm(filmID, guestID, rating).then(() => {
+      this.setState(({ pseudoRated }) => {
+        const newRatedArray = [...pseudoRated];
+        const newInfo = JSON.parse(JSON.stringify(fullInfo));
+        if (newRatedArray.findIndex((value) => value.id === fullInfo.id) === -1) {
+          newInfo.rating = rating;
+          newRatedArray.push(newInfo);
+        } else {
+          const index = newRatedArray.findIndex((value) => value.id === fullInfo.id);
+          newRatedArray[index].rating = rating;
+        }
+        return {
+          pseudoRated: newRatedArray,
+        };
+      });
+    });
+  };
+
+  changeTab = (tab) => {
+    this.setState(() => {
+      return {
+        currentTab: tab,
+      };
+    });
+  };
+
   appendFilms = (txt, page) => {
     this.api.getFilms(txt, page).then((arrayOfFilms) => {
       this.setState(({ films }) => {
         const newFilmsArray = [...films];
         newFilmsArray.push(...arrayOfFilms.results);
-
         return {
           films: newFilmsArray,
         };
@@ -133,25 +185,24 @@ export default class App extends Component {
     return null;
   };
 
-  toDoOnLoad() {
-    const { currentPage } = this.state;
-    this.checkPage(currentPage);
-    this.getGenres();
-    this.calcPaginationWidth();
-  }
-
   render() {
-    const { films, genresList, currentPage, filmsToShow, loading } = this.state;
-    //  console.log(this.state)
-
+    const { films, genresList, currentPage, filmsToShow, loading, guestID, pseudoRated, currentTab } = this.state;
     return (
-      <div className="app-container" onLoad={() => this.toDoOnLoad()}>
-        <Header />
-        <SearchField onSearch={this.getFilms} />
+      <div className="app-container">
+        <Provider value={[genresList, this.rateFilm, guestID]}>
+          <Header guestRated={this.getRatedFilms} rated={pseudoRated} guestID={guestID} changeTab={this.changeTab} />
+          {currentTab === 'search' ? (
+            <>
+              <SearchField onSearch={this.getFilms} />
+              <FilmsList films={filmsToShow} loading={loading} rated={pseudoRated} />
+              <Paginator onChange={this.onChange} currentPage={currentPage} total={films.length} />
+            </>
+          ) : (
+            <RatedTab rated={pseudoRated} />
+          )}
 
-        <FilmsList films={filmsToShow} genres={genresList} loading={loading} />
-        <this.notFound />
-        <Paginator onChange={this.onChange} currentPage={currentPage} total={films.length} />
+          <this.notFound />
+        </Provider>
       </div>
     );
   }
