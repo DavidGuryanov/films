@@ -51,16 +51,20 @@ export default class FilmCard extends Component {
     },
   };
 
-  state = {
-    src:
-      'https://www.themoviedb.org/assets/2/v4/glyphicons/basic/glyphicons-basic-38-picture-grey-c2ebdbb057f2a7614185931650f8cee23fa137b93812ccb132b9df511df1cfac.svg',
-    width: 0,
-  };
-
   constructor(props) {
     super(props);
+    this.state = {
+      src:
+        'https://www.themoviedb.org/assets/2/v4/glyphicons/basic/glyphicons-basic-38-picture-grey-c2ebdbb057f2a7614185931650f8cee23fa137b93812ccb132b9df511df1cfac.svg',
+      width: 0,
+    };
     this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
+    this.state.width = window.innerWidth;
   }
+
+  // componentWillMount(){
+  //   this.setState({width: window.innerWidth});
+  // }
 
   componentDidMount() {
     this.updateWindowDimensions();
@@ -78,7 +82,6 @@ export default class FilmCard extends Component {
   render() {
     const { film } = this.props;
     const { src, width } = this.state;
-
     let imgUrl = `https://image.tmdb.org/t/p/w200/${film.poster_path}`;
     if (!film.poster_path) {
       imgUrl =
@@ -174,7 +177,7 @@ export default class FilmCard extends Component {
             />
           </div>
           <div className="card_r-col_s">
-            <div className="flex-container_s" style={{ 'max-width': `${width - 132}px` }}>
+            <div className="flex-container_s" style={{ maxWidth: `${width - 132}px` }}>
               <h2 className="card__title_s">{film.original_title}</h2>
               <div className="card__badge" style={badgeStyle}>
                 <p className="badge__num">{film.vote_average}</p>
