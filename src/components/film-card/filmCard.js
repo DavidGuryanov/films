@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/jsx-filename-extension */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
@@ -53,11 +54,30 @@ export default class FilmCard extends Component {
   state = {
     src:
       'https://www.themoviedb.org/assets/2/v4/glyphicons/basic/glyphicons-basic-38-picture-grey-c2ebdbb057f2a7614185931650f8cee23fa137b93812ccb132b9df511df1cfac.svg',
+    width: 0,
   };
+
+  constructor(props) {
+    super(props);
+    this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
+  }
+
+  componentDidMount() {
+    this.updateWindowDimensions();
+    window.addEventListener('resize', this.updateWindowDimensions);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.updateWindowDimensions);
+  }
+
+  updateWindowDimensions() {
+    this.setState({ width: window.innerWidth });
+  }
 
   render() {
     const { film } = this.props;
-    const { src } = this.state;
+    const { src, width } = this.state;
 
     let imgUrl = `https://image.tmdb.org/t/p/w200/${film.poster_path}`;
     if (!film.poster_path) {
@@ -92,39 +112,102 @@ export default class FilmCard extends Component {
       this.setState({ src: imgUrl });
     };
 
-    return (
-      <div className="card">
-        <div className="card_l-col">
-          <img className="card__img" src={src} onLoad={imagePlaceholder} alt={`Poster for ${film.original_title}`} />
-        </div>
-        <div className="card_r-col">
-          <div className="flex-container">
-            <h2 className="card__title">{film.original_title}</h2>
-            <div className="card__badge2" style={badgeStyle}>
-              <p className="badge__num">{film.vote_average}</p>
-            </div>
+    if (width > 500) {
+      return (
+        <div className="card">
+          <div className="card_l-col">
+            <img className="card__img" src={src} onLoad={imagePlaceholder} alt={`Poster for ${film.original_title}`} />
           </div>
+          <div className="card_r-col">
+            <div className="flex-container">
+              <h2 className="card__title">{film.original_title}</h2>
+              <div className="card__badge" style={badgeStyle}>
+                <p className="badge__num">{film.vote_average}</p>
+              </div>
+            </div>
 
-          <Text type="secondary" className="card__date">
-            {rDate}
-          </Text>
+            <Text type="secondary" className="card__date">
+              {rDate}
+            </Text>
+            <Consumer>
+              {([genres, rate, guestID]) => {
+                let tags;
+                if (film.genre_ids.length > 0) {
+                  tags = film.genre_ids.map((el) => {
+                    return (
+                      <Tag className="tag" key={el}>
+                        {genres[el]}
+                      </Tag>
+                    );
+                  });
+                } else {
+                  tags = <Tag className="tag">No tags available</Tag>;
+                }
+                return (
+                  <>
+                    <div className="card__tags">{tags}</div>
+                    <p className="card__description">{film.overview}</p>
+                    <Rate
+                      count={10}
+                      allowHalf
+                      defaultValue={film.rating}
+                      className="card__rate"
+                      onChange={(num) => rate(film.id, guestID, num, film)}
+                    />
+                  </>
+                );
+              }}
+            </Consumer>
+          </div>
+        </div>
+      );
+    }
+    return (
+      <div className="card_s">
+        <div className="top_s">
+          <div className="card_l-col_s">
+            <img
+              className="card__img_s"
+              src={src}
+              onLoad={imagePlaceholder}
+              alt={`Poster for ${film.original_title}`}
+            />
+          </div>
+          <div className="card_r-col_s">
+            <div className="flex-container_s" style={{ 'max-width': `${width - 132}px` }}>
+              <h2 className="card__title_s">{film.original_title}</h2>
+              <div className="card__badge" style={badgeStyle}>
+                <p className="badge__num">{film.vote_average}</p>
+              </div>
+            </div>
+
+            <Text type="secondary" className="card__date">
+              {rDate}
+            </Text>
+            <Consumer>
+              {([genres]) => {
+                let tags;
+                if (film.genre_ids.length > 0) {
+                  tags = film.genre_ids.map((el) => {
+                    return (
+                      <Tag className="tag" key={el}>
+                        {genres[el]}
+                      </Tag>
+                    );
+                  });
+                } else {
+                  tags = <Tag className="tag">No tags available</Tag>;
+                }
+                return <div className="card__tags">{tags}</div>;
+              }}
+            </Consumer>
+          </div>
+        </div>
+        <div className="bot_s">
           <Consumer>
             {([genres, rate, guestID]) => {
-              let tags;
-              if (film.genre_ids.length > 0) {
-                tags = film.genre_ids.map((el) => {
-                  return (
-                    <Tag className="tag" key={el}>
-                      {genres[el]}
-                    </Tag>
-                  );
-                });
-              } else {
-                tags = <Tag className="tag">No tags available</Tag>;
-              }
               return (
                 <>
-                  <div className="card__tags">{tags}</div>
                   <p className="card__description">{film.overview}</p>
                   <Rate
                     count={10}

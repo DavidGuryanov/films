@@ -7,14 +7,49 @@
   margin-bottom: 35px;
   position: relative;
 }
+
+.card_s {
+  width: 387px;
+  height: 245px;
+  padding: 6px 10px;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Inter', sans-serif;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
+  margin-bottom: 35px;
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.top_s {
+  display: flex;
+  width: stretch;
+}
+.bot_s {
+  display: flex;
+  flex-direction: column;
+  height: 140px;
+}
 .card__img {
   height: 281px;
   width: 183px;
+}
+
+.card__img_s {
+  height: 91px;
+  width: 60px;
 }
 .card_r-col {
   display: flex;
   flex-direction: column;
   padding: 12px 20px;
+}
+.card_r-col_s {
+  display: flex;
+  flex-direction: column;
+  padding: 4px 10px;
+  width: stretch;
 }
 
 .card__title {
@@ -26,10 +61,32 @@
   white-space: nowrap;
   overflow: hidden;
 }
+.card__title_s {
+  font-size: 20px;
+  font-family: 'Inter', sans-serif;
+  margin-bottom: 0;
+  max-height: 30px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.card__date {
+  font-family: Inter;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 22px;
+}
+.card__tags {
+  max-width: 240px;
+  height: 32px;
+  overflow: hidden;
+}
 .tag {
   margin-top: 5px;
   margin-bottom: 5px;
 }
+
 .card__description {
   font-size: 12px;
   line-height: 22px;
@@ -42,31 +99,26 @@
 }
 .card__rate {
   margin-top: auto;
+  margin-left: auto;
 }
 .ant-rate-star:not(:last-child) {
   margin-right: 3px;
 }
-.card__tags {
-  max-width: 240px;
-  height: 32px;
-  overflow: hidden;
-}
-.card__date {
-  font-family: Inter;
-  font-style: normal;
-  font-weight: normal;
-  font-size: 12px;
-  line-height: 22px;
-}
+
 .flex-container {
   display: flex;
   justify-content: space-between;
   max-width: 231px;
 }
-.card__badge2 {
+.flex-container_s {
+  display: flex;
+  justify-content: space-between;
+  /* max-width: 231px; */
+}
+
+.card__badge {
   min-width: 30px;
   height: 30px;
-
   border-radius: 50%;
   background-color: white;
   color: black;
@@ -75,7 +127,6 @@
 .ant-badge-count {
   min-width: 30px;
   height: 30px;
-
   border-radius: 50%;
   background-color: white;
   color: black;
@@ -88,6 +139,7 @@
   text-align: center;
   font-family: Inter;
   font-size: 12px;
+  margin-bottom: 0em;
   /* line-height: 22px; */
 }
 
@@ -97,7 +149,8 @@
     margin-right: auto;
   }
 }
-@media (max-width: 500px) {
+
+/* @media (max-width: 500px) {
   .card {
     width: 387px;
     height: 245px;
@@ -140,4 +193,4 @@
   .card_r-col {
     width: 288px;
   }
-}
+} */
