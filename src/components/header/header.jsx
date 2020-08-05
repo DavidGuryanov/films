@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-filename-extension */
 import React, { Component } from 'react';
 import { Menu } from 'antd';
 import PropTypes from 'prop-types';

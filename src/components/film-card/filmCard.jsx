@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/jsx-filename-extension */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Typography, Rate, Tag } from 'antd';
@@ -208,6 +206,7 @@ export default class FilmCard extends Component {
         </div>
         <div className="bot_s">
           <Consumer>
+            {/* eslint-disable-next-line no-unused-vars */}
             {([genres, rate, guestID]) => {
               return (
                 <>

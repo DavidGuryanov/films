@@ -1,15 +1,13 @@
-/* eslint-disable react/jsx-filename-extension */
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
 import './index.css';
 import 'antd/dist/antd.css';
-import { message } from 'antd';
+import { message, Result } from 'antd';
+import { FrownOutlined } from '@ant-design/icons';
 import Header from './components/header/header';
 import SearchField from './components/search-field/search-field';
 import RatedTab from './components/rated-tab/ratedTab';
 import FilmsList from './components/films-list/filmsList';
 import ApiService from './services/apiService';
-import NoResults from './components/no-results/noResults';
 import Paginator from './components/paginator/paginator';
 import { Provider } from './components/context/context';
 
@@ -30,7 +28,7 @@ export default class App extends Component {
     currentTab: 'search',
   };
 
-  api = new ApiService();
+  api = ApiService;
 
   componentDidMount() {
     this.getGenres();
@@ -58,8 +56,7 @@ export default class App extends Component {
     this.setState({
       loading: true,
     });
-    this.api
-      .getFilms(query)
+    ApiService.getFilms(query)
       .then((arrayOfFilms) => {
         this.setState({
           films: arrayOfFilms.results,
@@ -80,7 +77,7 @@ export default class App extends Component {
   };
 
   getGenres = () => {
-    this.api.getGenres().then((result) => {
+    ApiService.getGenres().then((result) => {
       const mapped = result.map((item) => ({ [item.id]: item.name }));
       const newObj = Object.assign({}, ...mapped);
       this.setState({
@@ -90,7 +87,7 @@ export default class App extends Component {
   };
 
   createGuest = () => {
-    this.api.createGuest().then((result) => {
+    ApiService.createGuest().then((result) => {
       this.setState(() => {
         return {
           guestID: result.guest_session_id,
@@ -100,7 +97,7 @@ export default class App extends Component {
   };
 
   getRatedFilms = (guestID) => {
-    this.api.getGuestRatings(guestID).then((result) => {
+    ApiService.getGuestRatings(guestID).then((result) => {
       this.setState(() => {
         return {
           rated: result.results,
@@ -110,7 +107,7 @@ export default class App extends Component {
   };
 
   rateFilm = (filmID, guestID, rating, fullInfo) => {
-    this.api.rateFilm(filmID, guestID, rating).then(() => {
+    ApiService.rateFilm(filmID, guestID, rating).then(() => {
       this.setState(({ pseudoRated }) => {
         const newRatedArray = [...pseudoRated];
         const newInfo = JSON.parse(JSON.stringify(fullInfo));
@@ -137,7 +134,7 @@ export default class App extends Component {
   };
 
   appendFilms = (txt, page) => {
-    this.api.getFilms(txt, page).then((arrayOfFilms) => {
+    ApiService.getFilms(txt, page).then((arrayOfFilms) => {
       this.setState(({ films }) => {
         const newFilmsArray = [...films];
         newFilmsArray.push(...arrayOfFilms.results);
@@ -180,20 +177,30 @@ export default class App extends Component {
   notFound = () => {
     const { films, textQuery } = this.state;
     if (films.length === 0 && textQuery.length > 0) {
-      return <NoResults />;
+      return <Result status="warning" title="We looked everywhere but found nothing" icon={<FrownOutlined />} />;
     }
     return null;
   };
 
   render() {
-    const { films, genresList, currentPage, filmsToShow, loading, guestID, pseudoRated, currentTab } = this.state;
+    const {
+      films,
+      genresList,
+      currentPage,
+      filmsToShow,
+      loading,
+      guestID,
+      pseudoRated,
+      currentTab,
+      textQuery,
+    } = this.state;
     return (
       <div className="app-container">
         <Provider value={[genresList, this.rateFilm, guestID]}>
           <Header guestRated={this.getRatedFilms} rated={pseudoRated} guestID={guestID} changeTab={this.changeTab} />
           {currentTab === 'search' ? (
             <>
-              <SearchField onSearch={this.getFilms} />
+              <SearchField onSearch={this.getFilms} text={textQuery} />
               <FilmsList films={filmsToShow} loading={loading} rated={pseudoRated} />
               <Paginator onChange={this.onChange} currentPage={currentPage} total={films.length} />
             </>
@@ -207,5 +214,3 @@ export default class App extends Component {
     );
   }
 }
-
-ReactDOM.render(<App />, document.querySelector('#root'));

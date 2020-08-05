@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-filename-extension */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Spin } from 'antd';
@@ -68,7 +67,7 @@ export default class FilmsList extends Component {
     }
     const filmsList = films.map((item) => {
       const clonedItem = JSON.parse(JSON.stringify(item));
-      rated.map((ratedFilm) => {
+      rated.forEach((ratedFilm) => {
         if (ratedFilm.id === item.id) {
           clonedItem.rating = ratedFilm.rating;
         }
